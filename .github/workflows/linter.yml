@@ -56,18 +56,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Retrieve SHA
+        id: sha
+        run: |
+          echo "commit-sha=$(git log -1 --pretty=format:%H origin/main)" >> "$GITHUB_OUTPUT"
+
       - name: Linter
         uses: super-linter/super-linter@e1cb86b6e8d119f789513668b4b30bf17fe1efe4 # v7.2.0
         env:
           ENABLE_COMMITLINT_STRICT_MODE: true
           ENFORCE_COMMITLINT_CONFIGURATION_CHECK: true
+          LOG_LEVEL: DEBUG
+          # GITHUB_BEFORE_SHA: ${{ github.event_name == 'push' && steps.sha.outputs.commit-sha || null }}
           FILTER_REGEX_EXCLUDE: "^/github/workspace/snapcraft.yaml$" # Workaround for Prettier itself
           FIX_JAVASCRIPT_PRETTIER: true
           FIX_JSON_PRETTIER: true
           FIX_MARKDOWN_PRETTIER: true
           FIX_YAML_PRETTIER: true
           VALIDATE_GIT_MERGE_CONFLICT_MARKERS: false # See https://github.com/super-linter/super-linter/pull/6374
-          DEFAULT_BRANCH: "main"
+          DEFAULT_BRANCH: "origin/main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check
