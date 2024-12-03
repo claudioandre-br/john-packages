@@ -29,7 +29,7 @@ source ../helper.sh
 
 if [[ "$SANITIZER" == "address" ]]; then
 	# Asan
-	./configure --enable-asan
+	./configure --enable-werror --enable-asan
 	make -sj4
 	cp ../run/john "$OUT"/
 
